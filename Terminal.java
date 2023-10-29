@@ -30,11 +30,15 @@ public class Terminal {
 
     // commands
     public static void echo(String[] args) {
-        if (args.length != 1) {
+        if (args.length < 1) {
             System.out.println("invalid argument");
 
         } else {
-            System.out.println(args[0]);
+            for (int i = 0; i < args.length; ++i) {
+                System.out.print(args[i] + " ");
+
+            }
+            System.out.println();
         }
     }
 
