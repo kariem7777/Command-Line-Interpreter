@@ -84,12 +84,17 @@ public class Terminal {
         }
     }
 
-    public static void touch(String [] fileNames)throws IOException {
+     public static void touch(String [] fileNames) {
         for (String f : fileNames) {
             File file = new File(f);
             if (!file.exists()) {
-                file.createNewFile();
-                System.out.println("Created file:" + f);
+                try {
+                    file.createNewFile();
+                    System.out.println("Created file:" + f);
+                } catch (IOException e) {
+                    System.err.println("Error reading the file: " + e.getMessage());
+                }
+
             }
             //if file is exist modification time of the file
             else {
@@ -114,6 +119,8 @@ public class Terminal {
                     System.err.println("Error reading the file: " + e.getMessage());
                 }
             }
+             else
+                System.out.println("file not exist!!"+f);
         }
     }
     public static void chooseCommandAction(String command) {
