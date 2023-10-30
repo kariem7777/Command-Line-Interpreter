@@ -66,23 +66,28 @@ public class Terminal {
             }
         }
     }
-     public static void ls() {
-        //Get the dic path
-        File file = new File((System.getProperty("user.dire")));
+    public static void ls() {
+        // Get the current directory path
+        File file = new File(System.getProperty("user.dir"));
+
         if (!file.exists()) {
-            System.out.println("This directory is not exits ");
-        }
-        else {
+            System.out.println("This directory does not exist.");
+        } else {
             File[] files = file.listFiles();
-            for (File f : files) {
-                if (f.isDirectory())
-                    System.out.println("Directory: ");
-                else
-                    System.out.println("file: ");
-                System.out.println(f.getName());
+            if (files != null) {
+                for (File f : files) {
+                    if (f.isDirectory()) {
+                        System.out.println("Directory: " + f.getName());
+                    } else {
+                        System.out.println("File: " + f.getName());
+                    }
+                }
+            } else {
+                System.out.println("No files or directories in this directory.");
             }
         }
     }
+
 
      public static void touch(String [] fileNames) {
         for (String f : fileNames) {
