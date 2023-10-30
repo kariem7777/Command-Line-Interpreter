@@ -66,7 +66,7 @@ public class Terminal {
             }
         }
     }
-     public void ls() {
+     public static void ls() {
         //Get the dic path
         File file = new File((System.getProperty("user.dire")));
         if (!file.exists()) {
@@ -84,7 +84,7 @@ public class Terminal {
         }
     }
 
-    public void touch(String [] fileNames)throws IOException {
+    public static void touch(String [] fileNames)throws IOException {
         for (String f : fileNames) {
             File file = new File(f);
             if (!file.exists()) {
@@ -100,7 +100,7 @@ public class Terminal {
     }
     
 
-    public void cat(String[] fileNames) {
+    public static void cat(String[] fileNames) {
         for (String f : fileNames) {
             File file = new File(f);
             if (file.exists() && file.isFile()) {
