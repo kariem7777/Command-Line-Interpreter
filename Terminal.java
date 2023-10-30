@@ -64,7 +64,22 @@ public class Terminal {
             }
         }
     }
-
+    public void cat(String[] fileNames) {
+        for (String f : fileNames) {
+            File file = new File(f);
+            if (file.exists() && file.isFile()) {
+                try {
+                    BufferedReader br = new BufferedReader(new FileReader(file));
+                    String line = br.readLine();
+                    while (line != null) {
+                        System.out.println(line);
+                    }
+                } catch (IOException e) {
+                    System.err.println("Error reading the file: " + e.getMessage());
+                }
+            }
+        }
+    }
     public static void chooseCommandAction(String command) {
         switch (command) {
             case "echo":
