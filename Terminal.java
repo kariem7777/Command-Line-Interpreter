@@ -134,6 +134,15 @@ public class Terminal {
             case "rm":
                 rm(parser.getArgs());
                 break;
+            case "cat":
+                cat(parser.getArgs());
+                break;
+            case "touch":
+                touch(parser.getArgs());
+                break;
+            case "ls":
+                ls();
+                break;
             default:
                 System.out.println("command not found");
                 break;
