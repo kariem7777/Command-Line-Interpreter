@@ -131,6 +131,90 @@ public class Terminal {
                 System.out.println("file not exist!!"+f);
         }
     }
+       public static void lsR(String[] args) {
+        if (args.length == 1 && args[0].equals("-r")) {
+
+
+           File currentDir = new File(System.getProperty("user.dir"));
+           File[] files = currentDir.listFiles();
+           if (files != null) {
+               Arrays.sort(files, Collections.reverseOrder());
+               for (File file : files) {
+                   if (file.isDirectory()) {
+                       System.out.println(file.getName() + "/");
+                   } else {
+                       System.out.println(file.getName());
+                   }
+               }
+           }
+       }
+       else
+           System.out.println("invalid argument");
+}
+
+    public static void cp(String[] args) {
+
+        String sourceFilePath = args[0];
+        String destinationFilePath = args[1];
+        File sourceFile = new File(sourceFilePath);
+        File destinationFile = new File(destinationFilePath);
+
+
+        if (sourceFile.isFile() && destinationFile.isFile()) {
+            try {
+                Files.copy(Paths.get(sourceFilePath), Paths.get(destinationFilePath), StandardCopyOption.REPLACE_EXISTING);
+                System.out.println("File copied successfully.");
+            } catch (IOException e) {
+                System.out.println("Error copying the file: " + e.getMessage());
+            }
+        } else {
+            System.out.println(" source and destination must be files.");
+        }
+    }
+
+    public static void cpR(String[] args) {
+        if (args.length == 3 && args[0].equals ("-r")) {
+
+            String sourceDirectoryPath = args[1];
+            String destinationDirectoryPath = args[2];
+
+            File sourceDirectory = new File(sourceDirectoryPath);
+            File destinationDirectory = new File(destinationDirectoryPath);
+
+            if (sourceDirectory.isDirectory() && destinationDirectory.isDirectory()) {
+                try {
+                    copyDirectory(sourceDirectory, destinationDirectory);
+                    System.out.println("Directory copied successfully.");
+                } catch (IOException e) {
+                    System.out.println("Error copying the directory: " + e.getMessage());
+                }
+            } else {
+                System.out.println(" source and destination must be directories.");
+            }
+        }
+        else {
+            System.out.println("invalid arguments");
+        }
+    }
+
+
+    private static void copyDirectory(File source, File destination) throws IOException {
+        if (source.isDirectory()) {
+            if (!destination.exists()) {
+                destination.mkdir();
+            }
+
+            String[] files = source.list();
+            if (files != null) {
+                for (String file : files) {
+                    File srcFile = new File(source, file);
+                    File destFile = new File(destination, file);
+
+                    copyDirectory(srcFile, destFile);
+                }
+            }
+        }
+    }
     public static void chooseCommandAction(String command) {
         switch (command) {
             case "echo":
@@ -150,6 +234,17 @@ public class Terminal {
                 break;
             case "ls":
                 ls();
+                break;
+            case "lsR":
+                lsR(parser.getArgs());
+                break;
+            case "cp":
+                if (parser.args.length == 3)
+                    cpR(parser.getArgs());
+                else if(parser.getArgs().length==2)
+                    cp(parser.getArgs());
+                else
+                    System.out.println("invalid argument");
                 break;
             default:
                 System.out.println("command not found");
