@@ -1,12 +1,9 @@
+import java.nio.file.*;
 import java.util.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.Path;
 
 class parser {
     String commandName;
@@ -94,7 +91,7 @@ public class Terminal {
         }
     }
 
-   public static void touch(String[] fileNames) {
+    public static void touch(String[] fileNames) {
         for (String f : fileNames) {
             Path path = FileSystems.getDefault().getPath(f);
             File file;
@@ -144,7 +141,7 @@ public class Terminal {
             }
         }
     }
-    
+
 
     public static void lsR(String[] args) {
         if (args.length == 1 && args[0].equals("-r")) {
