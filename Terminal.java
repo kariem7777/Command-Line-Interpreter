@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.Path;
+
 class parser {
     String commandName;
     String args[];
@@ -69,6 +71,7 @@ public class Terminal {
             }
         }
     }
+
     public static void ls() {
         // Get the current directory path
         File file = new File(System.getProperty("user.dir"));
@@ -91,8 +94,7 @@ public class Terminal {
         }
     }
 
-
-     public static void touch(String [] fileNames) {
+    public static void touch(String[] fileNames) {
         for (String f : fileNames) {
             File file = new File(f);
             if (!file.exists()) {
@@ -104,14 +106,13 @@ public class Terminal {
                 }
 
             }
-            //if file is exist modification time of the file
+            // if file is exist modification time of the file
             else {
                 file.setLastModified(System.currentTimeMillis());
-                System.out.println("update time of file: "+f);
+                System.out.println("update time of file: " + f);
             }
         }
     }
-    
 
     public static void cat(String[] fileNames) {
         for (String f : fileNames) {
@@ -126,31 +127,29 @@ public class Terminal {
                 } catch (IOException e) {
                     System.err.println("Error reading the file: " + e.getMessage());
                 }
-            }
-             else
-                System.out.println("file not exist!!"+f);
+            } else
+                System.out.println("file not exist!!" + f);
         }
     }
-       public static void lsR(String[] args) {
+
+    public static void lsR(String[] args) {
         if (args.length == 1 && args[0].equals("-r")) {
 
-
-           File currentDir = new File(System.getProperty("user.dir"));
-           File[] files = currentDir.listFiles();
-           if (files != null) {
-               Arrays.sort(files, Collections.reverseOrder());
-               for (File file : files) {
-                   if (file.isDirectory()) {
-                       System.out.println(file.getName() + "/");
-                   } else {
-                       System.out.println(file.getName());
-                   }
-               }
-           }
-       }
-       else
-           System.out.println("invalid argument");
-}
+            File currentDir = new File(System.getProperty("user.dir"));
+            File[] files = currentDir.listFiles();
+            if (files != null) {
+                Arrays.sort(files, Collections.reverseOrder());
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        System.out.println(file.getName() + "/");
+                    } else {
+                        System.out.println(file.getName());
+                    }
+                }
+            }
+        } else
+            System.out.println("invalid argument");
+    }
 
     public static void cp(String[] args) {
 
@@ -159,10 +158,10 @@ public class Terminal {
         File sourceFile = new File(sourceFilePath);
         File destinationFile = new File(destinationFilePath);
 
-
         if (sourceFile.isFile() && destinationFile.isFile()) {
             try {
-                Files.copy(Paths.get(sourceFilePath), Paths.get(destinationFilePath), StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(Paths.get(sourceFilePath), Paths.get(destinationFilePath),
+                        StandardCopyOption.REPLACE_EXISTING);
                 System.out.println("File copied successfully.");
             } catch (IOException e) {
                 System.out.println("Error copying the file: " + e.getMessage());
@@ -173,7 +172,7 @@ public class Terminal {
     }
 
     public static void cpR(String[] args) {
-        if (args.length == 3 && args[0].equals ("-r")) {
+        if (args.length == 3 && args[0].equals("-r")) {
 
             String sourceDirectoryPath = args[1];
             String destinationDirectoryPath = args[2];
@@ -191,12 +190,10 @@ public class Terminal {
             } else {
                 System.out.println(" source and destination must be directories.");
             }
-        }
-        else {
+        } else {
             System.out.println("invalid arguments");
         }
     }
-
 
     private static void copyDirectory(File source, File destination) throws IOException {
         if (source.isDirectory()) {
@@ -215,6 +212,45 @@ public class Terminal {
             }
         }
     }
+
+    public static String handlePath(String[] args) {
+        if (args[0].matches("^[a-zA-Z][:].*")) {
+            return args[0];
+        } else {
+            String Pth = System.getProperty("user.dir");
+            Pth += "\\" + args[0];
+            return Pth;
+        }
+    }
+
+    public static void cd(String[] Dir) {
+
+        if (Dir.length == 0) {
+            System.setProperty("user.dir", "C:\\Users");
+
+        } else if (Dir.length == 1) {
+
+            if (Dir[0].equals("..")) {
+                String tmpPath = System.getProperty("user.dir");
+                File file = new File(tmpPath);
+                tmpPath = file.getParent().toString();
+                System.setProperty("user.dir", tmpPath);
+            } else {
+                String dirc = handlePath(Dir);
+                File f = new File(dirc);
+                if (f.exists()) {
+                    System.setProperty("user.dir", dirc);
+                } else {
+                    System.out.println("invalid path");
+                }
+
+            }
+        } else {
+            System.out.println("invalid argument");
+        }
+
+    }
+
     public static void chooseCommandAction(String command) {
         switch (command) {
             case "echo":
@@ -241,10 +277,13 @@ public class Terminal {
             case "cp":
                 if (parser.args.length == 3)
                     cpR(parser.getArgs());
-                else if(parser.getArgs().length==2)
+                else if (parser.getArgs().length == 2)
                     cp(parser.getArgs());
                 else
                     System.out.println("invalid argument");
+                break;
+            case "cd":
+                cd(parser.getArgs());
                 break;
             default:
                 System.out.println("command not found");
