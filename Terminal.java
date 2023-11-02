@@ -213,12 +213,13 @@ public class Terminal {
         }
     }
 
-    public static String handlePath(String[] args) {
-        if (args[0].matches("^[a-zA-Z][:].*")) {
-            return args[0];
+    public static String handlePath(String arg) {
+        if (arg.matches("^[a-zA-Z][:].*")) {
+            return arg;
+
         } else {
             String Pth = System.getProperty("user.dir");
-            Pth += "\\" + args[0];
+            Pth += "\\" + arg;
             return Pth;
         }
     }
@@ -236,7 +237,7 @@ public class Terminal {
                 tmpPath = file.getParent().toString();
                 System.setProperty("user.dir", tmpPath);
             } else {
-                String dirc = handlePath(Dir);
+                String dirc = handlePath(Dir[0]);
                 File f = new File(dirc);
                 if (f.exists()) {
                     System.setProperty("user.dir", dirc);
@@ -249,6 +250,25 @@ public class Terminal {
             System.out.println("invalid argument");
         }
 
+    }
+
+    public static void mkdir(String[] args) {
+        for (int i = 0; i < args.length; ++i) {
+            String dirc = handlePath(args[i]);
+            try {
+
+                Path path = Paths.get(dirc);
+
+                Files.createDirectories(path);
+
+                System.out.println("Directory is created!");
+
+            } catch (IOException e) {
+
+                System.err.println("Failed to create directory!" + e.getMessage());
+
+            }
+        }
     }
 
     public static void chooseCommandAction(String command) {
@@ -285,6 +305,9 @@ public class Terminal {
             case "cd":
                 cd(parser.getArgs());
                 break;
+            case "mkdir":
+                mkdir(parser.getArgs());
+                break;
             default:
                 System.out.println("command not found");
                 break;
@@ -315,6 +338,5 @@ public class Terminal {
                 parser.parse(input);
             }
         }
-
     }
 }
