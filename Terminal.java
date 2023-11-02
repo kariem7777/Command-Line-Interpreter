@@ -94,9 +94,15 @@ public class Terminal {
         }
     }
 
-    public static void touch(String[] fileNames) {
+   public static void touch(String[] fileNames) {
         for (String f : fileNames) {
-            File file = new File(f);
+            Path path = FileSystems.getDefault().getPath(f);
+            File file;
+            if (path.isAbsolute()) {
+                file = new File(f);
+            } else {
+                file = new File(System.getProperty("user.dir"), f);
+            }
             if (!file.exists()) {
                 try {
                     file.createNewFile();
@@ -106,7 +112,7 @@ public class Terminal {
                 }
 
             }
-            // if file is exist modification time of the file
+            //if file is exist modification time of the file
             else {
                 file.setLastModified(System.currentTimeMillis());
                 System.out.println("update time of file: " + f);
@@ -114,23 +120,31 @@ public class Terminal {
         }
     }
 
+
     public static void cat(String[] fileNames) {
         for (String f : fileNames) {
-            File file = new File(f);
+            Path path = FileSystems.getDefault().getPath(f);
+            File file;
+            if (path.isAbsolute()) {
+                file = new File(f);
+            } else {
+                file = new File(System.getProperty("user.dir"), f);
+            }
             if (file.exists() && file.isFile()) {
-                try {
-                    BufferedReader br = new BufferedReader(new FileReader(file));
-                    String line = br.readLine();
-                    while (line != null) {
+                try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                    String line;
+                    while ((line = br.readLine()) != null) {
                         System.out.println(line);
                     }
                 } catch (IOException e) {
                     System.err.println("Error reading the file: " + e.getMessage());
                 }
-            } else
-                System.out.println("file not exist!!" + f);
+            } else {
+                System.out.println("File does not exist: " + f);
+            }
         }
     }
+    
 
     public static void lsR(String[] args) {
         if (args.length == 1 && args[0].equals("-r")) {
