@@ -30,7 +30,8 @@ class parser {
 }
 
 public class Terminal {
-    static parser parser;
+    private static parser parser;
+    private static List<String> li = new ArrayList<String>();
 
     // commands
     public static void echo(String[] args) {
@@ -109,14 +110,13 @@ public class Terminal {
                 }
 
             }
-            //if file is exist modification time of the file
+            // if file is exist modification time of the file
             else {
                 file.setLastModified(System.currentTimeMillis());
                 System.out.println("update time of file: " + f);
             }
         }
     }
-
 
     public static void cat(String[] fileNames) {
         for (String f : fileNames) {
@@ -141,7 +141,6 @@ public class Terminal {
             }
         }
     }
-
 
     public static void lsR(String[] args) {
         if (args.length == 1 && args[0].equals("-r")) {
@@ -282,30 +281,91 @@ public class Terminal {
         }
     }
 
+    public static void rmdirAllEmptyDirs() {
+        File file = new File(System.getProperty("user.dir"));
+        File[] files = file.listFiles();
+        if (files != null) {
+            for (File f : files) {
+                if (f.isDirectory()) {
+                    if (f.list() != null) {
+                        if (f.list().length == 0) {
+                            if (f.delete()) {
+                                System.out.println("Directory removed successfully: " + f.getName());
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            System.out.println("No directories in this directory.");
+        }
+    }
+
+    public static void rmdir(String[] directoryPaths) {
+        String directoryPath = handlePath(directoryPaths[0]);
+        File directory = new File(directoryPath);
+
+        if (directory.exists() && directory.isDirectory()) {
+            if (directory.list().length == 0) {
+                if (directory.delete()) {
+                    System.out.println("Directory removed successfully: ");
+                } else {
+                    System.err.println("Failed to remove the directory: ");
+                }
+            } else {
+                System.err.println("Directory is not empty: ");
+            }
+        } else {
+            System.err.println("Directory does not exist or is not a directory: ");
+        }
+    }
+
+    public static void history() {
+        for (String s : li) {
+            System.out.println(s);
+        }
+    }
+
     public static void chooseCommandAction(String command) {
         switch (command) {
             case "echo":
+                li.add("echo");
                 echo(parser.getArgs());
                 break;
             case "pwd":
+                li.add("pwd");
                 pwd(parser.getArgs());
                 break;
             case "rm":
+                li.add("rm");
                 rm(parser.getArgs());
                 break;
             case "cat":
+                li.add("cat");
                 cat(parser.getArgs());
                 break;
             case "touch":
+                li.add("touch");
                 touch(parser.getArgs());
                 break;
+            // case "ls":
+            // li.add("ls");
+            // ls();
+            // break;
+            // case "lsR":
+            // li.add("ls -r");
+            // lsR(parser.getArgs());
+            // break;
             case "ls":
-                ls();
-                break;
-            case "lsR":
-                lsR(parser.getArgs());
+                li.add("ls");
+
+                if (parser.getArgs().length == 0)
+                    ls();
+                else if (parser.getArgs().length == 1)
+                    lsR(parser.getArgs());
                 break;
             case "cp":
+                li.add("cp");
                 if (parser.args.length == 3)
                     cpR(parser.getArgs());
                 else if (parser.getArgs().length == 2)
@@ -314,10 +374,22 @@ public class Terminal {
                     System.out.println("invalid argument");
                 break;
             case "cd":
+                li.add("cd");
                 cd(parser.getArgs());
                 break;
             case "mkdir":
+                li.add("mkdir");
                 mkdir(parser.getArgs());
+                break;
+            case "rmdir":
+                li.add("rmdir");
+                if (parser.args.length == 1 && parser.args[0].equals("*")) {
+                    rmdirAllEmptyDirs();
+                } else
+                    rmdir(parser.getArgs());
+                break;
+            case "history":
+                history();
                 break;
             default:
                 System.out.println("command not found");
